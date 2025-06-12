@@ -3,6 +3,10 @@
 A simple Flask app that provides current weather and air quality info for any city, plus a 5-day forecast — with a clean, user-friendly interface.
 
 ---
+## Live Demo 🚀
+You can try the app live here:  
+[https://weather-dashboard-s2xf.onrender.com](https://weather-dashboard-s2xf.onrender.com)
+
 
 ## Features
 
