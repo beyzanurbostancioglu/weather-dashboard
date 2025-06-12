@@ -5,10 +5,6 @@ app = Flask(__name__)
 
 API_KEY = "d22b046573cca4a01287e88d0b107be4"
 
-
-# geçici olarak buraya yaz
-
-
 @app.route("/", methods=["GET", "POST"])
 def index():
     weather_data = None
@@ -22,14 +18,32 @@ def index():
                 response = requests.get(weather_url)
                 data = response.json()
                 if response.status_code == 200:
+                    lat = data["coord"]["lat"]
+                    lon = data["coord"]["lon"]
+
+                    # Air Quality API çağrısı
+                    aqi_url = f"http://api.openweathermap.org/data/2.5/air_pollution?lat={lat}&lon={lon}&appid={API_KEY}"
+                    aqi_response = requests.get(aqi_url).json()
+                    aqi = aqi_response["list"][0]["main"]["aqi"]
+
+                    aqi_meaning = {
+                        1: "Good",
+                        2: "Fair",
+                        3: "Moderate",
+                        4: "Poor",
+                        5: "Very Poor"
+                    }.get(aqi, "Unknown")
+
                     weather_data = {
                         "city": data["name"],
                         "temperature": data["main"]["temp"],
                         "description": data["weather"][0]["description"],
-                        "icon": data["weather"][0]["icon"]
+                        "icon": data["weather"][0]["icon"],
+                        "aqi": aqi,
+                        "aqi_text": aqi_meaning
                     }
                 else:
-                    error = data.get("message", "Bilinmeyen hata")
+                    error = data.get("message", "Unknown error")
             except Exception as e:
                 error = str(e)
 
