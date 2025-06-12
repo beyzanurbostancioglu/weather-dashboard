@@ -29,7 +29,10 @@
             <div class="mt-6">
                 <h2 class="text-2xl font-semibold text-gray-700">Weather in {{ weather.city }}</h2>
                 <p class="text-lg text-gray-600">{{ weather.description }} | {{ weather.temperature }}°C</p>
-                <img src="http://openweathermap.org/img/wn/{{ weather.icon }}@2x.png" alt="icon" class="mx-auto mt-4" />
+                <div class="mx-auto mt-4 bg-blue-100 p-4 rounded-xl shadow inline-block">
+    <img src="http://openweathermap.org/img/wn/{{ weather.icon }}@2x.png" alt="icon" class="w-20 h-20" />
+</div>
+
                 <p class="text-md text-gray-700 mt-2">
                     Air Quality: <strong>{{ weather.aqi_text }}</strong> ({{ weather.aqi }})
                 </p>

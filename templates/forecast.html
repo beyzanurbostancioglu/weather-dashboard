@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
     <meta charset="UTF-8" />
     <title>5-Day Weather Forecast</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.3.2/dist/tailwind.min.css" rel="stylesheet">
 </head>
 <body class="bg-gradient-to-br from-blue-300 to-blue-600 min-h-screen p-6">
     <div class="max-w-4xl mx-auto bg-white rounded-3xl shadow-xl p-8">
@@ -42,11 +44,14 @@
                         <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-4">
                             {% for hour in day.hours %}
                                 <div class="bg-white rounded-lg p-2 flex flex-col items-center shadow">
-                                    <p class="font-medium">{{ hour.time }}</p>
-                                    <img src="http://openweathermap.org/img/wn/{{ hour.icon }}@2x.png" alt="icon" class="w-12 h-12" />
-                                    <p class="text-sm">{{ hour.temp }}°C</p>
-                                    <p class="capitalize text-gray-600 text-xs text-center">{{ hour.description }}</p>
-                                </div>
+    <p class="font-medium">{{ hour.time }}</p>
+    <div class="bg-blue-100 p-2 rounded-lg shadow flex flex-col items-center">
+        <img src="http://openweathermap.org/img/wn/{{ hour.icon }}@2x.png" alt="icon" class="w-12 h-12" />
+    </div>
+    <p class="text-sm">{{ hour.temp }}°C</p>
+    <p class="capitalize text-gray-600 text-xs text-center">{{ hour.description }}</p>
+</div>
+
                             {% endfor %}
                         </div>
                     </div>
