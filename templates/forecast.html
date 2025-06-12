@@ -30,17 +30,23 @@
         {% endif %}
 
         {% if forecast %}
-            <div class="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-5 gap-6">
-                {% for item in forecast %}
-                    <div class="bg-blue-100 rounded-xl p-4 text-center shadow">
-                        <p class="font-semibold">{{ item.dt_txt.split(' ')[0] }}<br /><span class="text-sm">{{ item.dt_txt.split(' ')[1] }}</span></p>
-                        <img
-                            src="http://openweathermap.org/img/wn/{{ item.icon }}@2x.png"
-                            alt="weather icon"
-                            class="mx-auto"
-                        />
-                        <p class="text-lg font-semibold">{{ item.temp }}°C</p>
-                        <p class="capitalize text-gray-700">{{ item.description }}</p>
+            <div class="space-y-8">
+                {% for day in forecast %}
+                    <div class="border rounded-xl p-6 shadow bg-blue-50">
+                        <h2 class="text-2xl font-semibold mb-2">{{ day.date }}</h2>
+                        <p class="mb-2">Average Temp: <strong>{{ day.avg_temp }}°C</strong></p>
+                        <p class="mb-4 capitalize">Most common weather: <strong>{{ day.common_desc }}</strong></p>
+
+                        <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-4">
+                            {% for hour in day.hours %}
+                                <div class="bg-white rounded-lg p-2 flex flex-col items-center shadow">
+                                    <p class="font-medium">{{ hour.time }}</p>
+                                    <img src="http://openweathermap.org/img/wn/{{ hour.icon }}@2x.png" alt="icon" class="w-12 h-12" />
+                                    <p class="text-sm">{{ hour.temp }}°C</p>
+                                    <p class="capitalize text-gray-600 text-xs text-center">{{ hour.description }}</p>
+                                </div>
+                            {% endfor %}
+                        </div>
                     </div>
                 {% endfor %}
             </div>

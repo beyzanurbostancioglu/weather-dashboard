@@ -1,9 +1,11 @@
 from flask import Flask, render_template, request
 import requests
+from collections import defaultdict, Counter
 
 app = Flask(__name__)
 
 API_KEY = "d22b046573cca4a01287e88d0b107be4"
+
 
 @app.route("/", methods=["GET", "POST"])
 def index():
@@ -21,11 +23,9 @@ def index():
                     lat = data["coord"]["lat"]
                     lon = data["coord"]["lon"]
 
-                    # Air Quality API çağrısı
                     aqi_url = f"http://api.openweathermap.org/data/2.5/air_pollution?lat={lat}&lon={lon}&appid={API_KEY}"
                     aqi_response = requests.get(aqi_url).json()
                     aqi = aqi_response["list"][0]["main"]["aqi"]
-
                     aqi_meaning = {
                         1: "Good",
                         2: "Fair",
@@ -59,7 +59,6 @@ def forecast():
         city = request.form.get("city")
         if city:
             try:
-                # Şehrin koordinatlarını al
                 geo_url = f"http://api.openweathermap.org/geo/1.0/direct?q={city}&limit=1&appid={API_KEY}"
                 geo_response = requests.get(geo_url).json()
 
@@ -69,19 +68,34 @@ def forecast():
                     lat = geo_response[0]["lat"]
                     lon = geo_response[0]["lon"]
 
-                    # 5 günlük hava tahmini çağrısı
                     forecast_url = f"https://api.openweathermap.org/data/2.5/forecast?lat={lat}&lon={lon}&appid={API_KEY}&units=metric"
                     forecast_response = requests.get(forecast_url).json()
 
                     if forecast_response.get("cod") == "200":
-                        forecast_data = []
+                        daily_forecast = defaultdict(list)
                         for entry in forecast_response["list"]:
-                            forecast_data.append({
-                                "dt_txt": entry["dt_txt"],
+                            date_str = entry["dt_txt"].split(" ")[0]
+                            daily_forecast[date_str].append({
+                                "time": entry["dt_txt"].split(" ")[1][0:5],
                                 "temp": entry["main"]["temp"],
                                 "description": entry["weather"][0]["description"],
                                 "icon": entry["weather"][0]["icon"],
                             })
+
+                        forecast_data = []
+                        for date, items in daily_forecast.items():
+                            avg_temp = sum(item["temp"] for item in items) / len(items)
+                            descriptions = [item["description"] for item in items]
+                            common_desc = Counter(descriptions).most_common(1)[0][0]
+
+                            forecast_data.append({
+                                "date": date,
+                                "avg_temp": round(avg_temp, 1),
+                                "common_desc": common_desc,
+                                "hours": items
+                            })
+
+                        forecast_data.sort(key=lambda x: x["date"])
                     else:
                         error = forecast_response.get("message", "Failed to get forecast data")
             except Exception as e:
