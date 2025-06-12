@@ -83,13 +83,18 @@ def forecast():
                             })
 
                         forecast_data = []
+                        from datetime import datetime
+
                         for date, items in daily_forecast.items():
                             avg_temp = sum(item["temp"] for item in items) / len(items)
                             descriptions = [item["description"] for item in items]
                             common_desc = Counter(descriptions).most_common(1)[0][0]
+                            date_obj = datetime.strptime(date, "%Y-%m-%d")
+                            day_name = date_obj.strftime("%A")  # Pazartesi, Salı ... (İngilizce)
 
                             forecast_data.append({
                                 "date": date,
+                                "day_name": day_name,
                                 "avg_temp": round(avg_temp, 1),
                                 "common_desc": common_desc,
                                 "hours": items
