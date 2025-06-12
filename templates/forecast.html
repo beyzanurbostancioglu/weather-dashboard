@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>5-Day Weather Forecast</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-br from-blue-300 to-blue-600 min-h-screen p-6">
+    <div class="max-w-4xl mx-auto bg-white rounded-3xl shadow-xl p-8">
+        <h1 class="text-4xl font-bold text-gray-800 mb-6 text-center">📅 5-Day Weather Forecast</h1>
+
+        <form method="POST" class="mb-8 flex justify-center gap-4">
+            <input
+                type="text"
+                name="city"
+                placeholder="Enter city name"
+                required
+                class="rounded-lg border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            />
+            <button
+                type="submit"
+                class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 font-semibold transition"
+            >
+                Get Forecast
+            </button>
+        </form>
+
+        {% if error %}
+            <p class="text-red-600 text-center mb-4">{{ error }}</p>
+        {% endif %}
+
+        {% if forecast %}
+            <div class="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-5 gap-6">
+                {% for item in forecast %}
+                    <div class="bg-blue-100 rounded-xl p-4 text-center shadow">
+                        <p class="font-semibold">{{ item.dt_txt.split(' ')[0] }}<br /><span class="text-sm">{{ item.dt_txt.split(' ')[1] }}</span></p>
+                        <img
+                            src="http://openweathermap.org/img/wn/{{ item.icon }}@2x.png"
+                            alt="weather icon"
+                            class="mx-auto"
+                        />
+                        <p class="text-lg font-semibold">{{ item.temp }}°C</p>
+                        <p class="capitalize text-gray-700">{{ item.description }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>

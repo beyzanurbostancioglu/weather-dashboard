@@ -50,5 +50,45 @@ def index():
     return render_template("index.html", weather=weather_data, error=error)
 
 
+@app.route("/forecast", methods=["GET", "POST"])
+def forecast():
+    forecast_data = None
+    error = None
+
+    if request.method == "POST":
+        city = request.form.get("city")
+        if city:
+            try:
+                # Şehrin koordinatlarını al
+                geo_url = f"http://api.openweathermap.org/geo/1.0/direct?q={city}&limit=1&appid={API_KEY}"
+                geo_response = requests.get(geo_url).json()
+
+                if len(geo_response) == 0:
+                    error = "City not found"
+                else:
+                    lat = geo_response[0]["lat"]
+                    lon = geo_response[0]["lon"]
+
+                    # 5 günlük hava tahmini çağrısı
+                    forecast_url = f"https://api.openweathermap.org/data/2.5/forecast?lat={lat}&lon={lon}&appid={API_KEY}&units=metric"
+                    forecast_response = requests.get(forecast_url).json()
+
+                    if forecast_response.get("cod") == "200":
+                        forecast_data = []
+                        for entry in forecast_response["list"]:
+                            forecast_data.append({
+                                "dt_txt": entry["dt_txt"],
+                                "temp": entry["main"]["temp"],
+                                "description": entry["weather"][0]["description"],
+                                "icon": entry["weather"][0]["icon"],
+                            })
+                    else:
+                        error = forecast_response.get("message", "Failed to get forecast data")
+            except Exception as e:
+                error = str(e)
+
+    return render_template("forecast.html", forecast=forecast_data, error=error)
+
+
 if __name__ == "__main__":
     app.run(debug=True)
